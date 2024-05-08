@@ -16,7 +16,7 @@ function App() {
   const getTasks = async () => {
     const response = await api.get('/tasks');
     setTodoList(response.data.data);
-  }
+  };
 
   const addTask = async () => {
     try {
@@ -31,7 +31,32 @@ function App() {
     } catch (error) {
       console.log("Error", error);
     }
-  }
+  };
+
+  const deleteTask = async (id) => {
+    try {
+      const response = await api.delete(`/tasks/${id}`);
+      if (response.status === 200) {
+        getTasks();
+      }
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
+
+  const toggleComplete = async (id) => {
+    try {
+      const task = todoList.find((item) => item._id === id);
+      const response = await api.put(`/tasks/${id}`, {
+        isComplete: !task.isComplete,
+      });
+      if (response.status === 200) {
+        getTasks();
+      }
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
 
   useEffect(() => {
     getTasks();
@@ -54,7 +79,7 @@ function App() {
         </Col>
       </Row>
 
-      <TodoBoard todoList={todoList} />
+      <TodoBoard todoList={todoList} deleteTask={deleteTask} toggleComplete={toggleComplete} />
     </Container>
   );
 }
